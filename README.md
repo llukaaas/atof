@@ -1,1 +1,2 @@
 # atof
+Pre pokretanja programa potrebno je u input.csv fajlu uneti rezultate merenja. Fajl se nalazi na putanji atofImproved\atofImpr\bin\Debug. Potrebno je uneti datum merenja, rezultat i komentar. Na datoj putanji se vec nalazi .csv fajl sa testnim primerima, po zelji modifikovati. Nakon toga potrebno je pokrenuti aplikaciju u izlaznom fajlu "output.csv" nalazice se podaci o mesecu i godini merenja, broju merenja po mesecu i suma merenja u datom mesecu. Nepravilna merenja smestena su u fajlu "output.err". Rezultate je moguce pisati i u naucnoj notaciji.
