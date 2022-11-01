@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace atofImpr
     {
         static void Main(string[] args)
         {
+
             List<Result> result = ReadCsvFile();
             WriteCsvFile(result);
             Console.ReadKey();
@@ -26,7 +28,7 @@ namespace atofImpr
             {
                 FirstLineHasColumnNames = true,
                 SeparatorChar = ',',
-                UseFieldIndexForReadingData = false
+                UseFieldIndexForReadingData = false,
             };
 
             var csvContext = new CsvContext();
@@ -36,6 +38,7 @@ namespace atofImpr
 
             foreach(Result rs in results)
             {
+
                 res.Add(rs);
             }
 
@@ -45,10 +48,10 @@ namespace atofImpr
         private static void WriteCsvFile(List<Result> result)
         {
             List<Sum> sums = new List<Sum>();
-
+            int count = 0;
             foreach (Result r in result)
             {
-                Console.WriteLine(r.checkRes(r.Res));
+                count++;
                 if (r.isInt(r.Res))
                 {
                     Sum suma = new Sum();
@@ -56,9 +59,9 @@ namespace atofImpr
                     suma.Godina = r.Date.Year;
                     suma.BrojMerenja = result.Where(w => w.Date.Month == r.Date.Month).Count();
                     suma.ZbirPoMesecu += Double.Parse(r.Res) * 1.0;
-                    Console.WriteLine(suma.Mesec + " | " + suma.BrojMerenja + " | " + suma.ZbirPoMesecu);
-                    //AddNewMonth(sums, suma);
-                    sums.Add(suma);
+                    //Console.WriteLine(suma.Mesec + " | " + suma.BrojMerenja + " | " + suma.ZbirPoMesecu);
+                    sums = AddNewMonth(sums, suma);
+                    //sums.Add(suma);
                 }
                 else if (r.isDouble(r.Res))
                 {
@@ -67,9 +70,7 @@ namespace atofImpr
                     suma.Godina = r.Date.Year;
                     suma.BrojMerenja = result.Where(w => w.Date.Month == r.Date.Month).Count();
                     suma.ZbirPoMesecu += Double.Parse(conNum(r.Res));
-                    Console.WriteLine(suma.Mesec + " | " + suma.BrojMerenja + " | " + suma.ZbirPoMesecu);
-                    //AddNewMonth(sums,suma);
-                    sums.Add(suma);
+                    AddNewMonth(sums,suma);
                 }
                 else if (r.checkRes(r.Res))
                 {
@@ -86,10 +87,23 @@ namespace atofImpr
                     double sumPerMonth = Resolve(firstNumb, numbers.ElementAt(1));
                     suma.ZbirPoMesecu = sumPerMonth;
                     
-                    Console.WriteLine(suma.Mesec + " | " + suma.BrojMerenja + " | " + suma.ZbirPoMesecu);
-                    //AddNewMonth(sums, suma);
-                    sums.Add(suma);
-                } 
+                    AddNewMonth(sums, suma);
+                }
+                else if(!r.checkRes(r.Res))
+                {
+                    string m = r.getMonth(r.Date);
+                    for (int i = 0; i < sums.Count(); i++)
+                    {
+
+                        if (m.Equals(sums.ElementAt(i).Mesec))
+                        {
+                            sums.ElementAt(i).BrojMerenja--;
+                        }
+                    }
+
+                    string text = "Line "+count+" cannot be converted into a number. Original value "+r.Res+" date "+r.Date.ToShortDateString();
+                    File.WriteAllText("output.err", text);
+                }
             }
 
             var csvFileDesc = new CsvFileDescription
@@ -105,24 +119,26 @@ namespace atofImpr
             
         }
 
-       /* private static void AddNewMonth(List<Sum> sums, Sum suma)
+        private static List<Sum> AddNewMonth(List<Sum> sums, Sum suma)
         {
             int ind = 0;
-            for(int i = 0; i < sums.Count(); i++)
+            for (int i = 0; i < sums.Count(); i++)
             {
-                if(sums.ElementAt(i).Mesec == suma.Mesec)
+                if (sums.ElementAt(i).Mesec.Equals(suma.Mesec))
                 {
                     ind = 1;
                     sums.ElementAt(i).ZbirPoMesecu += suma.ZbirPoMesecu;
-                    return;
-                }
-                if(ind == 1)
-                {
-                    sums.Add(suma);
-                    return;
+                    
                 }
             }
-        }*/
+
+            if (ind == 0)
+            {
+                sums.Add(suma);
+            }
+
+            return sums;
+        }
 
         private static string conNum(string num)
         {
@@ -170,6 +186,6 @@ namespace atofImpr
             }
 
             return firstNumb;
-        }
+        } 
     }
 }
