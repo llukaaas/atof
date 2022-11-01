@@ -17,9 +17,9 @@ namespace atofImpr.model
         public int Godina { get; set; }
 
         [CsvColumn(Name = "UkupnoMerenja")]
-        public string BrojMerenja { get; set; }
+        public int BrojMerenja { get; set; }
 
         [CsvColumn(Name = "Suma")]
-        public string ZbirPoMesecu { get; set; }
+        public double ZbirPoMesecu { get; set; }
     }
 }

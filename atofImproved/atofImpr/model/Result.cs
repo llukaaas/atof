@@ -51,7 +51,7 @@ namespace atofImpr.model
         }
         public bool checkRes(string res)
         {
-            string strRegex = @"^[0-9]+[eE]{1}[+-]{0,1}[1-9]{1}[0-9]*$";
+            string strRegex = @"^[0-9]+[.]{0,1}[0-9]*[eE]{1}[+-]{0,1}[1-9]{1}[0-9]*$";
             Regex re = new Regex(strRegex);
             if (re.IsMatch(res))
                 return true;
@@ -78,6 +78,5 @@ namespace atofImpr.model
             else
                 return false;
         }
-
     }
 }
