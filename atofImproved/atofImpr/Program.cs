@@ -49,6 +49,7 @@ namespace atofImpr
         {
             List<Sum> sums = new List<Sum>();
             int count = 0;
+            string text = "";
             foreach (Result r in result)
             {
                 count++;
@@ -101,10 +102,12 @@ namespace atofImpr
                         }
                     }
 
-                    string text = "Line "+count+" cannot be converted into a number. Original value "+r.Res+" date "+r.Date.ToShortDateString();
-                    File.WriteAllText("output.err", text);
+                    text += "Line "+(count+1)+" cannot be converted into a number. Original value "+r.Res+" date "+r.Date.ToShortDateString() + "\n";
                 }
             }
+
+            if(!text.Equals(""))
+                File.WriteAllText("output.err", text);
 
             var csvFileDesc = new CsvFileDescription
             {
